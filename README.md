@@ -64,7 +64,9 @@ The scorecard asks whether the team has a practical operating model for agentic 
 Ask your agent to set this up as a recurring task where your tool supports scheduled automations or recurring workflows. For example:
 
 ```text
-Set up the AI Engineering Maturity Assessment skill as a recurring task for this repo. Run it monthly, save each report, compare the results to the previous run, and recommend any changes for human review before editing shared instructions, skills, rules, or workflow docs.
+Set up the AI Engineering Maturity Assessment skill as a recurring task for this repo. Run it monthly, save each report, compare the results to the previous run, and recommend any changes for Human review before editing shared instructions, skills, rules, or workflow docs.
+
+Scan https://github.com/wandir-tech/agentic-engineering-scorecard for updates and check in with a Human if changes to the scorecard are needed before running the next assessment.
 ```
 
 Each run should produce a saved report so trend lines can be compared over time. A human should review proposed changes before applying them to shared instructions, skills, rules, or workflow docs.
