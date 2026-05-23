@@ -34,6 +34,8 @@ This is not a generic AI adoption survey. Prefer evidence from the operating sys
 - review practices
 - automation config
 - tool-specific agent setup
+- tool-specific local and repo directories
+- connected tools and their available data
 - product/design/QA/support workflows
 
 The final output should not merely score the team. Every miss should translate into a concrete next step.
@@ -60,7 +62,32 @@ Check for access to:
 - CI workflows and recent run history, if available
 - recurring automations, scheduled AI jobs, repo monitors, or agent tasks
 - IDE-agent configuration for Codex, Claude Code, Cursor, Copilot, or similar tools
+- tool-specific directories, both shared and local/private, such as `.codex/`, `.claude/`, `.cursor/`, `.github/`, `.ai/`, `ai/`, `skills/`, `prompts/`, and `playbooks/`
+- connected tool systems available to the assessing agent, such as ticketing, PRs, chat, docs, calendars, support queues, observability, CI, and release systems
 - documentation systems, if linked from the repo
+
+When inspecting tool-specific directories, distinguish between:
+
+- shared repo configuration that every contributor can see, review, version, and reuse
+- local or personal configuration that indicates useful individual practice but may not be portable across the team
+- duplicate or divergent per-tool instructions that may create inconsistent agent behavior
+- private agent memory, saved threads, or local notes that help one person but are not shared team infrastructure
+
+Do not treat tool-specific directories as noise. They may contain the clearest evidence of how people actually use agents: skills, prompts, MCP/server config, saved workflows, automations, hooks, model choices, review helpers, or local conventions. Also do not over-reward private setup. If each team member has useful but different private instructions and none of it is shared, score individual adoption as a strength and shared operating-system maturity as an improvement opportunity.
+
+Map which external tools are connected and inspect their data where access is available:
+
+- issue trackers and ticketing systems
+- pull request systems and code review
+- chat systems such as Slack or Teams
+- docs/wikis and design files
+- CI/CD systems
+- release management
+- support queues or customer feedback systems
+- observability, incident, or error tracking tools
+- calendar or meeting notes if they are part of the delivery workflow
+
+Use connected tool data as evidence, not just as a checklist. For example, inspect whether tickets contain agent-ready specs, whether chat contains useful decision history, whether PR comments feed back into instructions, and whether incident/support data affects tests or runbooks. If a tool is connected but its data is not being used by agents or not linked to delivery work, that is a signal for the tooling score.
 
 If access is missing, do not silently downgrade the team. Mark the evidence as unavailable and ask targeted setup questions.
 
@@ -79,6 +106,7 @@ Ask at most 5 setup/follow-up questions total. Prefer questions that unlock evid
 - "Do you use Codex, Claude Code, Cursor, Copilot, or another primary agent tool?"
 - "Are recurring AI automations, repo monitors, or scheduled checks configured somewhere outside this repo?"
 - "Is there a docs/wiki system that contains specs or runbooks not mirrored in git?"
+- "Which connected tools can this agent inspect, such as tickets, PRs, Slack/Teams, docs, support, CI, or observability?"
 
 ## Scoring
 
@@ -105,12 +133,14 @@ Do not reward volume. A repo with many prompt files, rules, or instructions is n
 1. Establish what systems and history you can inspect.
 2. Inspect evidence before asking maturity questions.
 3. Determine the repo’s AI memory files and instruction surfaces.
-4. After finding those memory files, inspect git/PR history for evidence that they are maintained and improved over time.
-5. Ask at most 5 total human questions, including setup questions.
-6. Ask only questions that would materially change the score or recommendations.
-7. If access is unavailable, say so plainly and lower confidence rather than inventing conclusions.
-8. As well as assigning scores, note possible improvements when you see a missing practice, weak signal, or avoidable source of friction.
-9. Be direct, practical, and specific.
+4. Inspect shared and local tool-specific directories for actual agent setup, while distinguishing team infrastructure from private individual practice.
+5. Map connected work systems and inspect their data when available, especially tickets, PRs, chat, docs, CI, support, and observability.
+6. After finding those memory files, inspect git/PR history for evidence that they are maintained and improved over time.
+7. Ask at most 5 total human questions, including setup questions.
+8. Ask only questions that would materially change the score or recommendations.
+9. If access is unavailable, say so plainly and lower confidence rather than inventing conclusions.
+10. As well as assigning scores, note possible improvements when you see a missing practice, weak signal, or avoidable source of friction.
+11. Be direct, practical, and specific.
 
 ## Core Maturity Questions
 
@@ -120,6 +150,8 @@ Look for repo-level context such as:
 
 - `AGENTS.md`
 - `CLAUDE.md`
+- `.codex/`
+- `.claude/`
 - `.cursor/rules`
 - `.cursorrules`
 - `.github/copilot-instructions.md`
@@ -170,6 +202,7 @@ Look for evidence of tool strategy across:
 - custom scripts
 - CI agents
 - local automations
+- tool-specific directories and config files
 
 Assess whether the team:
 
@@ -183,14 +216,58 @@ Assess whether the team:
 - uses lower-cost or faster tools where they are good enough, such as cheaper coding models for small edits, formatting, or routine implementation
 - has configured the repo for multiple-tool use where useful
 - has avoided accidental tool sprawl
+- converts useful individual tool setup into shared, reviewable team practice where appropriate
 
 Using multiple tools can be a strength, especially when the team keeps context, specs, verification, and skills portable. It can also be a cost strategy: a team might use a cheaper/faster tool or model for routine work and reserve more expensive agents for architecture, difficult debugging, or high-risk changes. A single-tool strategy can also be mature if the reasoning is clear and the operating model fits the team. The weak pattern is not "one tool" or "many tools"; it is a lack of deliberate strategy.
+
+Tool-specific directories can reveal the real strategy. Shared `.codex/`, `.claude/`, `.cursor/`, Copilot, or MCP configuration may show deliberate setup. Private local config may show strong individual practice, but if every contributor is doing something different and nothing is shared, treat that as a team-level improvement opportunity rather than a team operating model.
 
 If evidence is missing, ask:
 
 "Which AI tools does the team actually use, what is each one for, and does cost or latency affect that choice?"
 
-### 3. Can one developer safely keep multiple feature streams running at once?
+### 3. Are AI tools connected to the team's actual work systems?
+
+This question is about whether agents can see and use the systems where engineering work actually happens, not merely whether a team has accounts in many tools.
+
+Look for evidence of connected or inspectable systems such as:
+
+- ticketing and issue trackers
+- PR/code review systems
+- chat systems
+- docs, wiki, specs, and design files
+- CI/CD systems
+- release management
+- support queues or customer feedback systems
+- observability, incident, and error tracking tools
+- calendars, meeting notes, or planning boards when they drive delivery
+- MCP servers, connectors, plugins, API tokens, CLI setup, or documented access paths
+- local or repo tool configuration that names these integrations
+
+Assess whether agents can:
+
+- discover relevant tickets, specs, and acceptance criteria
+- read PR context, unresolved review comments, and CI failures
+- inspect chat or docs for decisions that are not captured in code
+- connect support, incident, or observability signals to bugs, tests, and runbooks
+- create or update durable artifacts where the team expects work to be tracked
+- link tickets, branches, commits, PRs, releases, and follow-up work
+- use connected data during assessment rather than relying only on human summaries
+- operate within clear permissions and human judgment gates for external systems
+
+Score the actual integration of tools into the AI workflow:
+
+- Low maturity: agents work only from local files while tickets, chat, PRs, and docs remain invisible.
+- Medium maturity: some tools are connected or manually pasted into sessions, but usage is inconsistent.
+- High maturity: agents routinely inspect the relevant systems, preserve decisions in durable places, and turn findings into tests, specs, tickets, PR updates, or runbook changes.
+
+Do not reward a long list of disconnected integrations. A single well-used ticket/PR/docs connection can matter more than many unused connectors. Conversely, if important work systems exist but agents never inspect them, note that AI is not yet integrated into the team's actual delivery loop.
+
+If evidence is missing, ask:
+
+"Which work systems are connected to the agent, and does the team expect agents to inspect tickets, PRs, chat, docs, CI, support, or observability data during normal work?"
+
+### 4. Can one developer safely keep multiple feature streams running at once?
 
 This measures development-environment concurrency: whether an individual contributor can act as a supervisor of several independent agent workstreams without being forced back into one-task-at-a-time local development.
 
@@ -238,7 +315,7 @@ If evidence is missing, ask:
 
 "Can one developer run multiple feature branches or agent tasks at the same time in this project, and what prevents port, database, environment, branch, or review conflicts?"
 
-### 4. Can an agent implement a real feature from the spec alone?
+### 5. Can an agent implement a real feature from the spec alone?
 
 Look for:
 
@@ -273,7 +350,7 @@ If evidence is missing, ask:
 
 "Pick a recent feature. Could a fresh AI session implement it from the ticket or spec without chat history?"
 
-### 5. Does the team have a deliberate way to divide and coordinate agent work?
+### 6. Does the team have a deliberate way to divide and coordinate agent work?
 
 Look for:
 
@@ -307,7 +384,7 @@ If evidence is missing, ask:
 
 "When a task is too large for one AI session, how do agents split the work and communicate progress?"
 
-### 6. Can agents verify their own work before claiming completion?
+### 7. Can agents verify their own work before claiming completion?
 
 Look for:
 
@@ -339,7 +416,7 @@ If evidence is missing, ask:
 
 "What does an AI agent have to run or show before the team accepts its work?"
 
-### 7. Are human-in-the-loop judgment gates explicit?
+### 8. Are human-in-the-loop judgment gates explicit?
 
 Human-in-the-loop is not a blanket requirement that humans approve every action. Assess whether human judgment is placed at the right risk points.
 
@@ -375,7 +452,7 @@ If evidence is missing, ask:
 
 "Where must an AI agent stop and ask for human judgment before continuing?"
 
-### 8. Does review catch AI-specific failure modes?
+### 9. Does review catch AI-specific failure modes?
 
 Look for:
 
@@ -405,7 +482,7 @@ If evidence is missing, ask:
 
 "How is reviewing AI-generated code different from reviewing human-written code on this team?"
 
-### 9. How does the team help agents with long-horizon feature work?
+### 10. How does the team help agents with long-horizon feature work?
 
 Look for:
 
@@ -457,7 +534,7 @@ If evidence is missing, ask:
 
 "For a feature that spans multiple sessions or days, how do agents plan, checkpoint, resume, verify progress, and know when they are done?"
 
-### 10. Does the team improve and maintain its AI operating system?
+### 11. Does the team improve and maintain its AI operating system?
 
 This question combines two ideas: whether the team learns from AI usage, and whether it grooms the instructions/skills/rules that agents rely on.
 
@@ -512,7 +589,7 @@ If evidence is missing, ask:
 
 "When an AI agent makes a mistake, do you update only the code, or also the instructions, specs, or checklists that would prevent the mistake next time?"
 
-### 11. Does the team know whether its AI instructions are helping or hurting?
+### 12. Does the team know whether its AI instructions are helping or hurting?
 
 This is related to overall AI measurement, but narrower: it asks whether the team can tell if its IDE-agent instructions are improving outcomes or merely adding context weight.
 
@@ -551,7 +628,7 @@ If evidence is missing, ask:
 
 "How do you know your IDE-agent instructions are improving coding outcomes rather than just adding context weight?"
 
-### 12. Is AI used across the delivery lifecycle, not just coding?
+### 13. Is AI used across the delivery lifecycle, not just coding?
 
 Look for AI involvement in adjacent functions, including:
 
@@ -599,7 +676,7 @@ If evidence is missing, ask:
 
 "Where does AI participate outside coding: design, QA, release, incident response, support, documentation, or product discovery?"
 
-### 13. Does the team use recurring AI automation for maintenance, monitoring, or follow-up?
+### 14. Does the team use recurring AI automation for maintenance, monitoring, or follow-up?
 
 This question asks whether AI is only invoked manually, or whether useful recurring checks run without waiting for someone to remember them.
 
@@ -655,7 +732,7 @@ If evidence is missing, ask:
 
 "What AI checks or maintenance tasks run on a schedule or event trigger, and who reviews their output?"
 
-### 14. Has product and design adapted to AI-speed engineering?
+### 15. Has product and design adapted to AI-speed engineering?
 
 This question overlaps with lifecycle usage, but focuses specifically on whether product/design remains the bottleneck once engineering gets faster.
 
@@ -686,9 +763,9 @@ If evidence is missing, ask:
 
 "When engineering can produce working prototypes quickly, how do product and design keep up?"
 
-### 15. Does the team measure whether AI is making delivery better?
+### 16. Does the team measure whether AI is making delivery better?
 
-This is the broad measurement question. It is different from Question 9, which is specifically about instruction effectiveness.
+This is the broad measurement question. It is different from Question 12, which is specifically about instruction effectiveness.
 
 Look for:
 
@@ -722,7 +799,7 @@ If evidence is missing, ask:
 
 "What evidence would convince you that AI is making the team better rather than just busier?"
 
-### 16. Is AI usage a team capability or one person’s private workflow?
+### 17. Is AI usage a team capability or one person’s private workflow?
 
 Look for evidence that AI practices are shared across the team rather than concentrated in one expert’s habits.
 
@@ -732,6 +809,8 @@ Look for:
 
 - multiple contributors updating AI-facing artifacts
 - shared skills, prompts, rules, or templates
+- shared tool-specific directories such as `.codex/`, `.claude/`, `.cursor/`, `.github/`, `.ai/`, `skills/`, `prompts/`, or `playbooks/`
+- useful local/private agent setup that could be promoted into shared repo artifacts
 - onboarding docs for AI workflows
 - team conventions for agent use
 - PR comments discussing AI-generated work
@@ -744,12 +823,14 @@ Assess whether:
 
 - AI usage varies wildly by team member
 - only one person understands the agent workflow
+- each contributor has separate private tool configuration with no shared convention
+- strong individual practices are converted into shared, reviewable instructions, skills, prompts, or templates
 - skills and rules are reviewed by the team
 - multiple people contribute improvements to AI-facing artifacts
 - new team members can learn the workflow from repo artifacts
 - AI-assisted work is visible and reviewable by teammates
 
-If git/PR history is available, check who contributes to AI-facing files. Do not assume low contributor count is bad for a solo project; score team maturity in light of team size.
+If git/PR history is available, check who contributes to AI-facing files. Also inspect tool-specific directories and, where available, local/private config for evidence of individual habits that have not yet become shared team practice. Do not assume low contributor count is bad for a solo project; score team maturity in light of team size.
 
 If evidence is missing, ask:
 
@@ -787,6 +868,8 @@ Include:
 - automation access
 - documentation/wiki access
 - AI tool configuration access
+- local/private tool-specific configuration access, if relevant and permitted
+- connected work-system access, including tickets, PRs, chat, docs, CI, support, release, or observability
 - team size and whether this is solo, small-team, or larger-team usage
 
 ### Scorecard
@@ -804,6 +887,7 @@ Group them by type:
 
 - AI context/instructions
 - tool strategy
+- connected tools and work-system data
 - development-environment concurrency
 - specs/planning
 - orchestration/agent communication
@@ -836,6 +920,8 @@ Examples:
 - Many skills without pruning means the team may be accumulating prompt debt.
 - No feedback loop from review findings to skills means the same AI mistakes will recur.
 - Multiple AI tools without a strategy means context and workflow drift will compound.
+- Connected tools that agents do not inspect mean AI work is still detached from the real delivery system.
+- Strong private tool setup without shared repo artifacts means individual capability is not yet team capability.
 - Multi-agent work without communication rules creates parallel confusion, not parallel leverage.
 
 ### Recommended Actions
@@ -855,6 +941,7 @@ Prefer actions that improve:
 - repeatability
 - context quality
 - tool strategy
+- connected tool usage
 - development-environment concurrency
 - agent communication
 - verification
@@ -877,6 +964,7 @@ Examples:
 - `ai/skills/`
 - issue spec template
 - AI-aware PR review checklist
+- connected-tool inventory and access map
 - agent communication protocol
 - release validation prompt
 - context health audit checklist
@@ -901,6 +989,8 @@ Consider:
 - no evidence agents actually use the skills
 - no process for pruning or improving context
 - no evidence that instruction changes improve outcomes
+- divergent private tool-specific instructions that are not reviewed or shared
+- connected tools that add access surface but are not used in agent workflows
 
 ### Reassessment Plan
 
@@ -918,6 +1008,7 @@ Include:
 - where the skill should live
 - how the prompt should be customized for this project
 - what evidence it should inspect each run
+- which connected tools and tool-specific directories it should inspect each run
 - what trend lines should be compared across runs
 - which questions should be re-scored
 - how findings should feed back into skills, rules, specs, or review checklists

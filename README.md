@@ -19,6 +19,7 @@ When adapting it, point the skill at:
 - the repo or repos in scope
 - ticketing and PR systems
 - CI, docs, runbooks, and automations
+- connected chat, support, observability, and release systems agents can inspect
 - the AI tools your team actually uses
 - local verification commands
 - branch, worktree, port, environment, database/schema, review, and release conventions
@@ -43,6 +44,7 @@ The scorecard asks whether the team has a practical operating model for agentic 
 
 - Can a fresh agent understand the project?
 - Is there a deliberate single-tool or multi-tool strategy?
+- Are agents connected to the actual work systems: tickets, PRs, chat, docs, CI, support, and observability?
 - Can one developer supervise multiple concurrent feature streams?
 - Can an agent implement from a spec and verify its work?
 - Are human-in-the-loop judgment gates explicit?
@@ -52,6 +54,7 @@ The scorecard asks whether the team has a practical operating model for agentic 
 - Do recurring threads, goals, queues, and automations keep work moving safely?
 - Does the team maintain its AI instructions, skills, prompts, and rules?
 - Is durable memory explicit and reviewable rather than trapped in chat transcripts?
+- Are useful tool-specific practices shared through repo artifacts rather than trapped in one contributor’s private setup?
 - Is AI usage shared across the team rather than trapped in one person’s habits?
 
 ## Recommended Cadence
