@@ -6,6 +6,8 @@ Most AI maturity models ask people how mature they think they are. This one asks
 
 This is mostly targeted at solo practitioners, founders, and small engineering teams. It intentionally stays away from heavyweight enterprise concerns such as procurement, centralized governance, legal policy, vendor management, and organization-wide change programs so it can stay focused on practical engineering workflow.
 
+Related blog post: https://fabrica.tech/blog/ai-engineering-maturity-scorecard/
+
 ## Use The Skill
 
 The canonical artifact is:
