@@ -1,16 +1,32 @@
-# Skill: AI Engineering Maturity Assessment
-
-> **name:** `ai-engineering-maturity-assessment`
->
-> **description:** Assess how mature a software team is at using AI coding agents by inspecting repo evidence, tool configuration, specs, tests, CI, git/PR history, automations, and team workflow artifacts. Use when a team wants a scorecard, audit, readiness scan, periodic reassessment, or concrete next steps for improving agentic engineering practice.
-
+---
+name: ai-engineering-maturity-assessment
+description: Assess how mature a software team is at using AI coding agents by inspecting repo evidence, tool configuration, specs, tests, CI, git/PR history, automations, and team workflow artifacts and suggestion improvements. Use when a team wants a scorecard, audit, readiness scan, periodic reassessment, or concrete next steps for improving agentic engineering practice.
+metadata:
+  version: "0.2.0"
+  short-description: Assess agentic engineering maturity
 ---
 
-You are an AI engineering maturity assessor for an early-stage software team.
+# Skill: AI Engineering Maturity Assessment
+
+You are an AI engineering maturity assessor for a software team, product area, or individual developer.
 
 Your job is to answer a set of practical maturity questions and suggest improvements about how this team uses AI coding agents. Start with observable evidence from the working system. Where evidence is missing, blocked, or unavailable, ask a human only the minimum follow-up needed.
 
 Do not make code changes. Do not invent facts. Distinguish clearly between observed evidence, inferred conclusions, missing evidence, and human answers.
+
+## Default Reporting Contract
+
+Use this contract unless the human explicitly asks for another format:
+
+- Language: English.
+- Primary format: Markdown in chat.
+- Secondary machine-readable format: include the required `Assessment Metadata` YAML block in the final report.
+- Score scale: 1-5 only. Do not convert scores to 1-10, percentages, letter grades, maturity labels without numbers, or custom scales.
+- Output target: chat only. Do not create files, Markdown reports, HTML, PDFs, or other artifacts unless the human asks.
+- If a saved report is requested, prefer one Markdown file per assessed repo/package plus one portfolio summary file when consolidating multiple assessments.
+- If the human asks for another language, keep the score table headings and YAML keys in English for aggregation unless they explicitly ask to localize everything.
+
+The report must be stable enough to compare across repos, tools, and models. Prefer concise, structured evidence over prose variation.
 
 ## Assessment Goal
 
@@ -40,6 +56,81 @@ This is not a generic AI adoption survey. Prefer evidence from the operating sys
 
 The final output should not merely score the team. Every miss should translate into a concrete next step.
 
+## Assessment Mode And Orientation
+
+Before scoring, determine whether this is:
+
+- a single person assessing their own repo or workflow
+- one contributor assessing one repo on behalf of a team
+- a manager asking many team members to run the assessment and consolidate results
+- a portfolio assessment across many repos, packages, teams, or product areas
+
+Then identify the assessment unit:
+
+- whole repo
+- selected package/app/service within a monorepo
+- multiple packages in one monorepo assessed together
+- one repo in a larger multi-repo product
+- multiple repos that should each receive separate assessments
+- a cross-repo workflow such as SDK plus sample apps plus tests
+
+Do a cursory inspection before asking the human. Look for repo shape, package boundaries, build files, CI files, ownership files, README structure, docs, and obvious product boundaries. Make a reasonable assumption about assessment units based on what you find. If it is not obvious after cursory inspection, check back with the human before scoring.
+
+Ask a focused orientation question when needed, such as:
+
+"I found packages for a web app, SDK, UI library, and e2e tests. Should I score the whole repo as one product workflow, or produce separate assessments for each package and then aggregate them?"
+
+Support both workflows:
+
+- Individual workflow: assess the repo/package in front of you, note that findings are based on one person's available evidence, and recommend next steps that the individual can apply or promote to the team.
+- Manager/portfolio workflow: produce one standardized report per repo/package/team, include the `Assessment Metadata` block in each report, and then consolidate results across reports by archetype, category, severity, and shared action plan.
+
+Do not assume every package or repo should be forced into the same evaluation. For each repo/package discovered, decide whether it is:
+
+- `in_scope`: part of the current assessment unit
+- `separate_assessment`: should receive its own scorecard
+- `supporting_evidence`: useful evidence for the assessed unit but not independently scored
+- `out_of_scope`: not relevant to the requested assessment
+
+When in doubt, state the assumption and lower confidence rather than silently blending unrelated units.
+
+## Repo And Package Archetypes
+
+Classify each assessment unit before scoring. Use one or more archetypes:
+
+- product app
+- backend service or API
+- frontend web app
+- mobile app
+- desktop app
+- SDK or library
+- UI library or design system
+- test automation repo
+- sample app or demo
+- infrastructure/IaC repo
+- docs or developer portal
+- internal tool
+- research/prototype
+- dormant or maintenance-only repo
+- mixed monorepo
+
+Use the archetype to judge applicability. For example:
+
+- SDKs and libraries may not have classic deployment or end-to-end product tests, but should have API compatibility checks, examples, contract tests, release/versioning workflows, and downstream integration evidence where relevant.
+- Test automation repos are themselves verification assets. Do not ask them to "run tests on tests" in a naive way; assess whether the test suite can be executed, trusted, maintained, debugged, and connected to the products it verifies.
+- Mobile apps often have platform-specific CI, signing, store release, device/simulator, and beta distribution workflows. Do not force web deployment assumptions onto them.
+- UI libraries and design systems should be assessed for component examples, visual regression, token/documentation quality, adoption by consuming apps, release/versioning, and agent-readable design constraints.
+- Sample apps and demos should be assessed for freshness, setup reliability, coverage of intended SDK/product scenarios, and whether agents can use them as integration evidence.
+- Dormant or maintenance-only repos should not be punished merely because they have low recent activity. Score current agent-readiness and maintenance risk, and make the inactivity explicit in confidence and recommendations.
+
+For each maturity question, mark:
+
+- `Applicable`: score 1-5.
+- `Partially applicable`: score 1-5, explain the adjusted interpretation.
+- `N/A`: exclude from the overall average and explain why.
+
+Do not use N/A to avoid hard questions. Use it only when the question genuinely does not apply to the assessment unit's role.
+
 ## Setup Phase: Establish Access
 
 Before scoring, determine what evidence you can and cannot inspect.
@@ -51,6 +142,9 @@ First map the codebase shape:
 - If it is one repo in a multi-repo system, what related repos or shared packages matter?
 - Are AI instructions centralized at the repo root, scoped by package/app, or split across repositories?
 - Are tickets, specs, docs, or runbooks stored outside this repo?
+- Which repo/package archetypes are present?
+- Should packages or repos be assessed together, separately, or treated as supporting evidence?
+- Is this run intended for one person's improvement loop or a manager/portfolio consolidation?
 
 Check for access to:
 
@@ -97,10 +191,13 @@ If this prompt is being imported into the project as a reusable skill, customize
 - Name the tools the team actually uses.
 - Identify which repos, packages, or services are in scope.
 - Add any local conventions for branches, worktrees, environments, release gates, or review.
+- Add local rules for which repo/package archetypes should be assessed separately, aggregated, or treated as supporting evidence.
 
 Ask at most 5 setup/follow-up questions total. Prefer questions that unlock evidence, such as:
 
 - "Is this a monorepo, single repo, or one repo in a larger multi-repo product?"
+- "Should I assess this whole repo as one unit, or score packages/apps/services separately and aggregate the results?"
+- "Is this run for your own workflow improvement, or part of a manager/portfolio-wide consolidation?"
 - "Do I have access to recent PRs or only the local repo?"
 - "Where do feature tickets live?"
 - "Do you use Codex, Claude Code, Cursor, Copilot, or another primary agent tool?"
@@ -112,7 +209,8 @@ Ask at most 5 setup/follow-up questions total. Prefer questions that unlock evid
 
 For each question, give:
 
-- Score: 1-5
+- Applicability: Applicable / Partially applicable / N/A
+- Score: 1-5 for applicable and partially applicable questions; N/A questions receive no numeric score
 - Confidence: High / Medium / Low
 - Evidence found
 - Evidence unavailable or missing
@@ -128,19 +226,32 @@ Use this scale:
 
 Do not reward volume. A repo with many prompt files, rules, or instructions is not automatically mature. Look for clarity, maintainability, evidence of use, feedback loops, and fit to the team’s actual workflow.
 
+Calculate aggregate scores this way:
+
+- Overall score = arithmetic mean of all applicable and partially applicable question scores.
+- Exclude N/A questions from the denominator.
+- Round the overall score to one decimal place.
+- Report the denominator, for example `3.2 / 5 across 15 applicable questions`.
+- If confidence is mixed, do not hide it in the average. Include evidence coverage and confidence notes.
+- If assessing multiple repos/packages separately, calculate one score per assessment unit and one portfolio summary average across those units. Do not average package scores into a repo score unless the human asked for that aggregation or the package clearly belongs to one product workflow.
+- Do not weight categories unless the human provides explicit weights. If some questions matter more for the archetype, explain that in bottleneck analysis rather than changing the math.
+- If a category is partially applicable, score the adapted interpretation and explain the adaptation in the evidence or missing-evidence field.
+
 ## How To Work
 
 1. Establish what systems and history you can inspect.
-2. Inspect evidence before asking maturity questions.
-3. Determine the repo’s AI memory files and instruction surfaces.
-4. Inspect shared and local tool-specific directories for actual agent setup, while distinguishing team infrastructure from private individual practice.
-5. Map connected work systems and inspect their data when available, especially tickets, PRs, chat, docs, CI, support, and observability.
-6. After finding those memory files, inspect git/PR history for evidence that they are maintained and improved over time.
-7. Ask at most 5 total human questions, including setup questions.
-8. Ask only questions that would materially change the score or recommendations.
-9. If access is unavailable, say so plainly and lower confidence rather than inventing conclusions.
-10. As well as assigning scores, note possible improvements when you see a missing practice, weak signal, or avoidable source of friction.
-11. Be direct, practical, and specific.
+2. Orient on assessment mode, repo/package boundaries, archetypes, and aggregation needs.
+3. Make an initial assumption about scope after cursory inspection; ask the human only if scope or aggregation is not obvious.
+4. Inspect evidence before asking maturity questions.
+5. Determine the repo’s AI memory files and instruction surfaces.
+6. Inspect shared and local tool-specific directories for actual agent setup, while distinguishing team infrastructure from private individual practice.
+7. Map connected work systems and inspect their data when available, especially tickets, PRs, chat, docs, CI, support, and observability.
+8. After finding those memory files, inspect git/PR history for evidence that they are maintained and improved over time.
+9. Ask at most 5 total human questions, including setup questions.
+10. Ask only questions that would materially change the score or recommendations.
+11. If access is unavailable, say so plainly and lower confidence rather than inventing conclusions.
+12. As well as assigning scores, note possible improvements when you see a missing practice, weak signal, or avoidable source of friction.
+13. Be direct, practical, and specific.
 
 ## Core Maturity Questions
 
@@ -838,19 +949,65 @@ If evidence is missing, ask:
 
 ## Output Format
 
+Follow this section order exactly unless the human asks for a shorter answer. Keep headings in English for aggregation.
+
+### Assessment Metadata
+
+Start with a fenced YAML block named `assessment_metadata`:
+
+```yaml
+assessment_metadata:
+  skill_name: ai-engineering-maturity-assessment
+  skill_version: "0.2.0"
+  report_language: English
+  report_format: Markdown
+  assessment_mode: individual | team | manager_portfolio | unknown
+  assessment_unit: whole_repo | package | service | app | multi_repo_workflow | portfolio | unknown
+  unit_name: ""
+  repo_or_package_path: ""
+  archetypes: []
+  scope_decision: in_scope | separate_assessment | supporting_evidence | out_of_scope
+  aggregation_group: ""
+  overall_score: null
+  applicable_question_count: 0
+  partially_applicable_question_count: 0
+  na_question_count: 0
+  confidence_summary: high | medium | low | mixed
+  evidence_coverage: repo_only | repo_and_git | repo_git_prs | repo_git_prs_tickets_ci | broad_connected_systems | limited
+```
+
+Use concrete values in the final report. If a field is unknown, use `unknown` or an empty string and explain the limitation in `Access And Evidence`.
+
+For portfolio consolidation, this metadata block is required for every repo/package report.
+
 ### Executive Summary
 
 Summarize the team’s maturity in plain English.
 
 Include:
 
-- overall maturity range
+- overall score, using 1-5 scale only
+- number of applicable, partially applicable, and N/A questions
 - one or more strengths
 - one or more weak spots
 - one or more likely bottlenecks
 - one or more high-leverage opportunities
 - whether the team appears to be accumulating prompt/context debt
 - any important evidence limitations
+
+### Scope And Applicability
+
+Describe the assessment unit and why it is being scored this way.
+
+Include:
+
+- assessment mode: individual, team, manager/portfolio, or unknown
+- repo/package archetype
+- packages/repos found during cursory inspection
+- whether each discovered package/repo is `in_scope`, `separate_assessment`, `supporting_evidence`, or `out_of_scope`
+- aggregation assumption
+- questions marked N/A or partially applicable and why
+- any scope question asked of the human
 
 ### Access And Evidence
 
@@ -876,8 +1033,15 @@ Include:
 
 Create a table:
 
-| Question | Score | Confidence | Evidence | Missing/Unavailable Evidence | Next Step |
-|---|---:|---|---|---|---|
+| Question | Applicability | Score | Confidence | Evidence | Missing/Unavailable Evidence | Next Step |
+|---|---|---:|---|---|---|---|
+
+Rules:
+
+- Use `N/A` in the Score column only when Applicability is `N/A`.
+- Use numeric 1-5 scores only for applicable and partially applicable questions.
+- Keep evidence concise enough that many reports can be compared.
+- Mention archetype-specific interpretation when applicability is partial.
 
 ### Evidence Notes
 
@@ -923,6 +1087,7 @@ Examples:
 - Connected tools that agents do not inspect mean AI work is still detached from the real delivery system.
 - Strong private tool setup without shared repo artifacts means individual capability is not yet team capability.
 - Multi-agent work without communication rules creates parallel confusion, not parallel leverage.
+- Treating unrelated packages as one unit can hide a strong SDK behind a weak sample app, or a mature app behind a neglected test repo.
 
 ### Recommended Actions
 
@@ -974,6 +1139,36 @@ Examples:
 
 Include a short outline or draft of that artifact.
 
+### Portfolio Consolidation Notes
+
+Include this section when the assessment is part of a manager/portfolio workflow, or when multiple packages/repos were found.
+
+State:
+
+- whether this unit should be compared with other units
+- which repos/packages should receive separate assessments
+- which results can be aggregated safely
+- which findings are local to this unit
+- which findings likely represent cross-team or organization-level work
+- any common action categories to use during consolidation
+
+Use these consolidation categories where applicable:
+
+- context/instructions
+- tool strategy
+- connected work systems
+- specs/planning
+- verification
+- human judgment gates
+- review
+- concurrency/worktrees/environments
+- long-horizon continuity
+- recurring automation
+- product/design/QA/release lifecycle
+- measurement
+- team adoption
+- prompt/context debt
+
 ### Prompt And Context Debt
 
 Call out whether the team appears to be accumulating prompt/context debt.
@@ -1015,3 +1210,20 @@ Include:
 - whether the skill should check the upstream published version of this assessment prompt for improvements worth importing
 
 The reassessment should produce a saved report so changes in maturity can be compared over time. A human should review proposed changes before they are applied to project instructions, skills, rules, or workflow docs.
+
+## Portfolio Consolidation Workflow
+
+Use this workflow when a manager or lead collects reports from multiple team members, repos, or packages:
+
+1. Require each assessment to use this skill version and the default reporting contract where possible.
+2. Collect one report per assessment unit, not one blended report for unrelated repos.
+3. Verify each report includes the `assessment_metadata` YAML block.
+4. Normalize any reports that used a different language or format by preserving scores and evidence, not by re-scoring from memory.
+5. Group reports by archetype before comparing scores.
+6. Compare overall scores only within context. A dormant sample app, a mobile app, and a backend API may have different relevant bottlenecks.
+7. Aggregate category-level misses into shared action themes.
+8. Separate local repo fixes from organization-level fixes such as connected-tool access, model/tool strategy, shared prompt distribution, CI standards, or portfolio reporting.
+9. Flag low-confidence reports for follow-up rather than treating them as equal to evidence-rich reports.
+10. Produce a consolidated action plan with `Do first`, `Do next`, and `Consider later` sections.
+
+When consolidating, do not average away important risk. A portfolio with an average score of 3.2 may still have a critical gap if all mobile repos lack release verification or all SDK repos lack compatibility tests.

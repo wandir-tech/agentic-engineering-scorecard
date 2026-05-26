@@ -8,6 +8,12 @@ This is mostly targeted at solo practitioners, founders, and small engineering t
 
 Related blog post: https://fabrica.tech/blog/ai-engineering-maturity-scorecard/
 
+## Current Version
+
+Skill version: `0.2.0`
+
+This version adds portfolio-oriented orientation, repo/package archetypes, applicability/N/A handling, explicit aggregate score calculation, and a stable report contract for teams collecting results across many repos.
+
 ## Use The Skill
 
 The canonical artifact is:
@@ -31,6 +37,12 @@ Then ask your agent:
 ```text
 Use the AI Engineering Maturity Assessment skill to assess this repo. Start with the setup/access phase, inspect evidence before asking me questions, and translate every miss into concrete next steps.
 ```
+
+## Portfolio Or Manager Workflow
+
+For portfolio-wide use, have each team member run the same skill version and default output format against the repo or package they know best. Each report should keep the `assessment_metadata` block so results can be consolidated by repo/package archetype, applicable score count, confidence, and common action category.
+
+When a repo contains multiple packages, apps, SDKs, test suites, libraries, or sample apps, the agent should first decide whether each unit belongs in the same assessment, needs a separate assessment, is supporting evidence, or is out of scope. If the answer is not obvious after cursory inspection, it should ask before scoring.
 
 ## If Your Tool Does Not Support Skills
 
@@ -76,6 +88,18 @@ Scan https://github.com/wandir-tech/agentic-engineering-scorecard for updates an
 
 Each run should produce a saved report so trend lines can be compared over time. A human should review proposed changes before applying them to shared instructions, skills, rules, or workflow docs.
 
+## Distribution
+
+This repo is structured so the skill can be copied manually or installed by tools that understand `SKILL.md` directories.
+
+Once the repository is public/indexed, compatible skill installers should be able to install the skill with:
+
+```bash
+npx skills add wandir-tech/agentic-engineering-scorecard --skill ai-engineering-maturity-assessment
+```
+
+Review any installed skill before using it, especially if installing through a public directory or marketplace.
+
 ## Status
 
-This is an early v0.1 artifact. Expect the scorecard to evolve as the practice evolves.
+This is an early v0.2 artifact. Expect the scorecard to evolve as the practice evolves.
