@@ -1,0 +1,13 @@
+{
+  "$schema": "https://skills.sh/schemas/skills.sh.schema.json",
+  "notGrouped": "bottom",
+  "groupings": [
+    {
+      "title": "Assessment",
+      "description": "Skills for assessing agentic engineering maturity and turning evidence into practical next steps.",
+      "skills": [
+        "ai-engineering-maturity-assessment"
+      ]
+    }
+  ]
+}
