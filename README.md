@@ -20,6 +20,12 @@ The canonical artifact is:
 
 [skills/ai-engineering-maturity-assessment/SKILL.md](skills/ai-engineering-maturity-assessment/SKILL.md)
 
+Install it with the Skills CLI:
+
+```bash
+npx skills add wandir-tech/agentic-engineering-scorecard --skill ai-engineering-maturity-assessment
+```
+
 If your coding agent supports skills, import or copy that folder into your project’s skill location and adapt the setup section to your repo.
 
 When adapting it, point the skill at:
@@ -92,11 +98,7 @@ Each run should produce a saved report so trend lines can be compared over time.
 
 This repo is structured so the skill can be copied manually or installed by tools that understand `SKILL.md` directories.
 
-Once the repository is public/indexed, compatible skill installers should be able to install the skill with:
-
-```bash
-npx skills add wandir-tech/agentic-engineering-scorecard --skill ai-engineering-maturity-assessment
-```
+The root `skills.sh.json` groups the skill for the repo page on skills.sh. It only affects skills.sh display; the CLI discovers the skill from the `SKILL.md` frontmatter.
 
 Review any installed skill before using it, especially if installing through a public directory or marketplace.
 
