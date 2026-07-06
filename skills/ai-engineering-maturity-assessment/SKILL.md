@@ -2,7 +2,7 @@
 name: ai-engineering-maturity-assessment
 description: Assess how mature a software team is at using AI coding agents by inspecting repo evidence, tool configuration, specs, tests, CI, git/PR history, automations, and team workflow artifacts and suggestion improvements. Use when a team wants a scorecard, audit, readiness scan, periodic reassessment, or concrete next steps for improving agentic engineering practice.
 metadata:
-  version: "0.2.0"
+  version: "0.3.0"
   short-description: Assess agentic engineering maturity
 ---
 
@@ -512,6 +512,9 @@ Look for:
 - documented process requiring tests or verification before completion
 - step-by-step acceptance tests or walkthrough specs
 - test scripts that exercise specific user journeys
+- property-based, randomized, or fuzz testing infrastructure
+- generative test harnesses that produce new cases rather than replaying fixed ones
+- bugs found in the field or by agents minted into permanent regression cases
 
 Assess whether verification is:
 
@@ -522,6 +525,8 @@ Assess whether verification is:
 - automated and tied into AI workflows
 - part of a documented agent workflow
 - specific enough that an agent can walk through expected behavior step by step
+
+Weight generative testing by agent volume. Hand-written example tests rarely constrain agent-scale code volume: when a team ships large amounts of agent-written code, anything not constrained from degrading will degrade. A steered fuzzer or property-based suite plus an always-growing regression corpus is strong evidence; the same fixed test set replayed on every PR is weaker than it looks.
 
 If evidence is missing, ask:
 
@@ -545,6 +550,7 @@ Look for:
 - branch protection or required reviews
 - issue/PR templates that name human decisions
 - agent instructions that say when to stop and ask
+- hard enforcement of gates via permission systems, hooks, CI checks, or spend caps rather than prose-only rules
 
 Assess whether the team has explicit human gates for:
 
@@ -558,6 +564,8 @@ Assess whether the team has explicit human gates for:
 - low-confidence agent conclusions
 
 Do not penalize appropriate autonomy for low-risk work. The mature pattern is risk-based oversight.
+
+Distinguish instruction-level guardrails from enforced guardrails. A prose rule in an instruction file fails at a low but real rate per agent-day; that is tolerable for a handful of supervised agents and catastrophic at high agent volume or when shipping without review. Look for hard enforcement — permissions, hooks, CI-enforced checks, branch protection, spend caps — on the highest-consequence gates, and score whether enforcement strength matches the team's actual agent volume and risk.
 
 If evidence is missing, ask:
 
@@ -575,6 +583,9 @@ Look for:
 - examples of AI-aware review comments
 - postmortems
 - rules about dangerous fallbacks, hallucinated APIs, silent failures, or overconfident completion claims
+- a false-positive rejection process for agent-generated findings
+- requirements that findings include an executed reproduction or reviewable artifact
+- independent or adversarial verification of findings, including contrarian review passes
 
 Assess whether review checks for:
 
@@ -586,6 +597,8 @@ Assess whether review checks for:
 - tests that prove too little
 - code that works locally but not in production
 - AI-generated verbosity or unnecessary abstraction
+
+Also assess how agent-generated findings — bug reports, audit results, review comments — are filtered before they reach humans. Mature teams require an executed reproduction or artifact (a failing test, a log, a recording) and verify findings independently; requiring the agent to prove a claim by executing code removes more wrong conclusions than extra review passes do. A pipeline that forwards unverified agent findings to humans is a spam generator, not a quality process.
 
 If PR access is unavailable, mark confidence accordingly.
 
@@ -730,8 +743,12 @@ Assess whether the team knows:
 - which instructions add tokens without improving outcomes
 - whether shorter prompts perform as well as longer ones
 - whether prompt or skill changes are tested against representative tasks
+- whether workflow and instruction changes are adopted from repeated trials rather than single runs or viral recommendations
+- whether workarounds for model failure modes that no longer exist are retired
 
 Do not require app-style LLM observability for IDE agents. A lightweight repo-native eval loop is enough: representative tasks, isolated branches/worktrees, two instruction variants, and comparison of success, tests, runtime, rework, and human intervention.
+
+Run-to-run variance in agent outcomes is large enough that one good run supports almost any conclusion. Treat single-anecdote adoption — a tool, prompt trick, or model choice picked because it worked once or was recommended online — as a weak signal, and repeated comparison against a baseline as a strong one. Also look for retired instructions: workarounds written for model failure modes that newer models no longer exhibit add context weight without value.
 
 If there is no evidence, score this low or mark it as an emerging gap. Do not let this single question dominate the overall maturity score unless prompt/context debt is visibly harming the team.
 
@@ -893,6 +910,8 @@ Look for:
 - developer surveys
 - before/after comparisons
 - delivery reports
+- human verification of load-bearing numbers in agent-produced analyses
+- pre-registered expectations for experiments and metric reads
 
 Assess whether the team measures:
 
@@ -905,6 +924,8 @@ Assess whether the team measures:
 - AI-related incidents
 - cost per useful outcome
 - percentage of work that improves the AI operating system
+
+Agent-produced data analyses are frequently plausible but wrong. Assess whether the team treats them as drafts — checking the specific numbers a decision rests on — rather than accepting conclusions wholesale, and whether important experiments state their expected outcome and read window before results are examined.
 
 If evidence is missing, ask:
 
@@ -947,6 +968,36 @@ If evidence is missing, ask:
 
 "How consistent is AI usage across the team, and who contributes to the shared skills, prompts, and workflow docs?"
 
+### 18. Are autonomous and recurring agent loops kept honest?
+
+This question applies when the team runs agent loops that act with limited supervision: recurring automations that change things, self-improving pipelines, issue-to-PR flows, content or data pipelines, or long-running background agents. If the team runs no such loops, mark this N/A (Question 14 already covers whether recurring automation exists at all).
+
+Look for:
+
+- an evaluator or grader independent of the acting agent, scoring output against an explicit rubric
+- external feedback signals feeding the loop: production metrics, logs, tests, support tickets, or user data the actor cannot game
+- reversible automated decisions with provenance (what acted, on what evidence, when) rather than hard deletes or irreversible publishes
+- spend caps, rate limits, and escalation triggers that halt the loop on anomalies
+- an explicit human check-in cadence, with a digest or report designed for fast steering
+- monitoring for loop degradation: whether output quality or throughput trends down between check-ins
+- a friction or blocker ledger the loop maintains about its own stalls and human-waits
+- human approval gates on the loop's outward-facing or costly actions
+- results reported as distributions or spreads rather than single blended averages
+
+Assess whether:
+
+- the actor grades its own output (weak) or an independent evaluator scores against a rubric (strong)
+- feedback comes from the loop's own claims (weak) or from external signals (strong)
+- the loop is designed around productive human check-ins (strong) or claims full autonomy while quietly degrading (weak)
+- automated decisions can be audited and reversed
+- the team can say what the loop did last week without reading transcripts
+
+Do not reward loop count or autonomy for its own sake. One supervised loop with an independent evaluator, external feedback, and reversible decisions is more mature than many unsupervised loops.
+
+If evidence is missing, ask:
+
+"For your recurring or autonomous agent loops, what keeps them honest: who or what evaluates the output, what external signal feeds back, and when does a human look?"
+
 ## Output Format
 
 Follow this section order exactly unless the human asks for a shorter answer. Keep headings in English for aggregation.
@@ -958,7 +1009,7 @@ Start with a fenced YAML block named `assessment_metadata`:
 ```yaml
 assessment_metadata:
   skill_name: ai-engineering-maturity-assessment
-  skill_version: "0.2.0"
+  skill_version: "0.3.0"
   report_language: English
   report_format: Markdown
   assessment_mode: individual | team | manager_portfolio | unknown
@@ -1088,6 +1139,8 @@ Examples:
 - Strong private tool setup without shared repo artifacts means individual capability is not yet team capability.
 - Multi-agent work without communication rules creates parallel confusion, not parallel leverage.
 - Treating unrelated packages as one unit can hide a strong SDK behind a weak sample app, or a mature app behind a neglected test repo.
+- Recurring automation without an independent evaluator means the loop grades its own homework and will drift.
+- Instruction-only guardrails at high agent volume mean rule failures arrive on a schedule, not as a surprise.
 
 ### Recommended Actions
 
@@ -1164,6 +1217,7 @@ Use these consolidation categories where applicable:
 - concurrency/worktrees/environments
 - long-horizon continuity
 - recurring automation
+- autonomous loop honesty
 - product/design/QA/release lifecycle
 - measurement
 - team adoption
