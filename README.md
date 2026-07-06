@@ -10,9 +10,11 @@ Related blog post: https://fabrica.tech/blog/ai-engineering-maturity-scorecard/
 
 ## Current Version
 
-Skill version: `0.2.0`
+Skill version: `0.3.0`
 
-This version adds portfolio-oriented orientation, repo/package archetypes, applicability/N/A handling, explicit aggregate score calculation, and a stable report contract for teams collecting results across many repos.
+This version adds a new maturity question on keeping autonomous and recurring agent loops honest (independent evaluation, external feedback, reversible decisions, human check-in cadence), and strengthens existing questions with: generative/randomized testing as verification evidence, enforced-vs-prose guardrails matched to agent volume, false-positive discipline for agent-generated findings, variance-aware adoption of workflow changes, and treating agent-produced analyses as drafts.
+
+Previous 0.2.0 additions: portfolio-oriented orientation, repo/package archetypes, applicability/N/A handling, explicit aggregate score calculation, and a stable report contract for teams collecting results across many repos.
 
 ## Use The Skill
 
@@ -72,6 +74,9 @@ The scorecard asks whether the team has a practical operating model for agentic 
 - Can long-horizon work survive multiple sessions?
 - Are recurring AI checks maintaining the engineering system?
 - Do recurring threads, goals, queues, and automations keep work moving safely?
+- Are autonomous or recurring agent loops kept honest by independent evaluation, external feedback, and human check-ins?
+- Does verification include generative or randomized testing that can constrain agent-scale code volume?
+- Are workflow and instruction changes validated against run-to-run variance rather than single anecdotes?
 - Does the team maintain its AI instructions, skills, prompts, and rules?
 - Is durable memory explicit and reviewable rather than trapped in chat transcripts?
 - Are useful tool-specific practices shared through repo artifacts rather than trapped in one contributor’s private setup?
